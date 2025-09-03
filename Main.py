@@ -4,15 +4,17 @@ from Medico import Medico
 from Paciente import Paciente
 from Turno import Turno
 from HistoriaClinica import HistoriaClinica
+from auth import Auth
 
 
 def inicializar_bd():
+    Auth.crearTabla()
     Area.crearTabla()
     Especialidad.crearTabla()
-    Paciente.crearTabla()
     Medico.crearTabla()
+    Paciente.crearTabla()
     Turno.crearTabla()
-    HistoriaClinica.crearTabla()
+    HistoriaClinica.crearTabla()    
     print("Tablas creadas y base de datos inicializada.")
 
 if __name__ == "__main__":
