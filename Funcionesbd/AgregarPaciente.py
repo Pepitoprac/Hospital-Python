@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
-from Paciente import Paciente
+from Modelos.Paciente import Paciente
 import sqlite3
 
-def agregar_paciente():
+def agregar_paciente(Paciente):
     dni = entry_dni.get()
     nombre = entry_nombre.get()
     fecha = entry_fecha.get()

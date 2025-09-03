@@ -1,7 +1,7 @@
 import sqlite3
-from Paciente import Paciente
-from Medico import Medico
-from Area import Area
+from Modelos.Paciente import Paciente
+from Modelos.Medico import Medico
+from Modelos.Area import Area
 
 class HistoriaClinica:
     def __init__(self, id_historia, paciente: Paciente, medico: Medico, area: Area, fecha, hora, detalles_sintomas):

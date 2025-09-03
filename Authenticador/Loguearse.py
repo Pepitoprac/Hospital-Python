@@ -1,14 +1,10 @@
 import sqlite3
 import tkinter as tk
 from tkinter import messagebox
-import HospitalPython.auth
-
-
-
+from autenticador import Auth
 
 DB = "hospital.db"
 
-# ---------------- Helpers BD ----------------
 def registrar_usuario():
     nombre = entry_user.get().strip()
     contrasena = entry_pass.get().strip()

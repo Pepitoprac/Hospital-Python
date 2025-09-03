@@ -1,10 +1,10 @@
-from Area import Area
-from Especialidad import Especialidad
-from Medico import Medico
-from Paciente import Paciente
-from Turno import Turno
-from HistoriaClinica import HistoriaClinica
-from auth import Auth
+from Modelos.Area import Area
+from Modelos.Especialidad import Especialidad
+from Modelos.Medico import Medico
+from Modelos.Paciente import Paciente
+from Modelos.Turno import Turno
+from Modelos.HistoriaClinica import HistoriaClinica
+from Authenticador.autenticador import Auth
 
 
 def inicializar_bd():
