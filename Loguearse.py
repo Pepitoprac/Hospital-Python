@@ -1,9 +1,12 @@
 import sqlite3
 import tkinter as tk
+from VistaAdmin import VentanaAdmin
 from tkinter import messagebox
-from autenticador import Auth
 
 DB = "hospital.db"
+
+def conectar_db():
+    return sqlite3.connect(DB)
 
 def registrar_usuario():
     nombre = entry_user.get().strip()
@@ -14,20 +17,23 @@ def registrar_usuario():
         messagebox.showwarning("Error", "Todos los campos son obligatorios")
         return
 
-    conexion = sqlite3.connect(DB)
+    conexion = conectar_db()
     cursor = conexion.cursor()
     try:
         cursor.execute("INSERT INTO usuario (nombre, contrasena, rol) VALUES (?, ?, ?)",
                        (nombre, contrasena, rol))
         conexion.commit()
         messagebox.showinfo("Éxito", "Usuario registrado correctamente")
-        entry_user.delete(0, tk.END)
-        entry_pass.delete(0, tk.END)
-        entry_rol.delete(0, tk.END)
+        limpiar_campos()
     except sqlite3.IntegrityError:
         messagebox.showerror("Error", "El nombre de usuario ya existe")
     finally:
         conexion.close()
+
+def limpiar_campos():
+    entry_user.delete(0, tk.END)
+    entry_pass.delete(0, tk.END)
+    entry_rol.delete(0, tk.END)
 
 def loguearse():
     nombre = entry_user.get().strip()
@@ -37,7 +43,7 @@ def loguearse():
         messagebox.showwarning("Error", "Usuario y contraseña requeridos")
         return
 
-    conexion = sqlite3.connect(DB)
+    conexion = conectar_db()
     cursor = conexion.cursor()
     cursor.execute("SELECT contrasena, rol FROM usuario WHERE nombre = ?", (nombre,))
     row = cursor.fetchone()
@@ -49,6 +55,23 @@ def loguearse():
         messagebox.showerror("Error", "Contraseña incorrecta")
     else:
         messagebox.showinfo("Bienvenido", f"Login correcto. Rol: {row[1]}")
+
+        # Ocultar ventana actual (login)
+        root.withdraw()
+
+        # Abrir ventana de administración y guardar referencia para evitar que se cierre
+        datos_usuario = {"nombre": nombre, "rol": row[1]}
+        global ventana_admin
+        ventana_admin = VentanaAdmin(root, datos_usuario)
+
+        # Aquí se puede agregar lógica para cuando la ventana admin se cierre
+        ventana_admin.protocol("WM_DELETE_WINDOW", on_cerrar_admin)
+
+def on_cerrar_admin():
+    # Cierra ventana admin, muestra login y limpia campos
+    ventana_admin.destroy()
+    limpiar_campos()
+    root.deiconify()
 
 # ---------------- Ventana Tkinter ----------------
 

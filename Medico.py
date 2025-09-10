@@ -1,4 +1,4 @@
-from Modelos.Especialidad import Especialidad
+from Especialidad import Especialidad
 import sqlite3
 
 class Medico:

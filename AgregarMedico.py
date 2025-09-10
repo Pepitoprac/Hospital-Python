@@ -1,5 +1,5 @@
 import sqlite3
-from Modelos import Medico
+from Medico import Medico
 # --------------------
 # Funciones de médicos
 # --------------------

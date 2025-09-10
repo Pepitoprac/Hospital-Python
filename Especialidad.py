@@ -1,4 +1,4 @@
-from Modelos.Area import Area
+from Area import Area
 
 class Especialidad:
     def __init__(self, id_especialidad, area: Area, nombre):
