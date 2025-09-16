@@ -1,6 +1,10 @@
+import tkinter as tk
+from tkinter import messagebox
 import sqlite3
 
-
+# -------------------------
+# Función atender próximo
+# -------------------------
 def atenderproximo(medico_id):
     conexion = sqlite3.connect("hospital.db")
     cursor = conexion.cursor()
@@ -31,3 +35,39 @@ def atenderproximo(medico_id):
     conexion.close()
 
     return {"ok": True, "msg": f"Turno {turno_id} atendido y registrado en historia clínica"}
+
+
+# -------------------------
+# Interfaz Tkinter
+# -------------------------
+def ventana_atenderproximo():
+    ventana = tk.Toplevel()
+    ventana.title("Atender Próximo Turno")
+
+    # Label y campo de entrada
+    tk.Label(ventana, text="ID Médico").grid(row=0, column=0, padx=10, pady=5, sticky="w")
+    entry_medico = tk.Entry(ventana)
+    entry_medico.grid(row=0, column=1, padx=10, pady=5)
+
+    # Función que se ejecuta al presionar botón
+    def procesar():
+        medico_id = entry_medico.get().strip()
+
+        if not medico_id:
+            messagebox.showwarning("Error", "Debe ingresar el ID del médico")
+            return
+
+        resultado = atenderproximo(medico_id)
+        if resultado["ok"]:
+            messagebox.showinfo("Éxito", resultado["msg"])
+            entry_medico.delete(0, tk.END)
+        else:
+            messagebox.showwarning("Aviso", resultado["msg"])
+
+    # Botón para atender
+    tk.Button(
+        ventana, 
+        text="Atender Próximo", 
+        command=procesar, 
+        bg="lightblue"
+    ).grid(row=1, column=0, columnspan=2, pady=10)
