@@ -7,11 +7,9 @@ from AgregarPaciente import agregar_paciente
 from AsignarTurno import asignarturno
 from AtenderProximo import atenderproximo
 from HistorialxPaciente import historialporpaciente
-from ListarHistorialxPaciente import listar_historial_pacientes
 from ListarMedico import listarmedico
 from ListarPaciente import listarpaciente
 from Turnoxmedico import verturnopormedico
-from VerHistorial import verhistorial
 
 
 class VentanaAdmin(tk.Toplevel):
@@ -45,11 +43,9 @@ class VentanaAdmin(tk.Toplevel):
             ("Asignar Turno (UI)", self.abrir_asignar_turno),
             ("Atender Próximo", self.abrir_atender_proximo),
             ("Historial por Paciente", self.abrir_historial_por_paciente),
-            ("Listar Historial Pacientes", self.abrir_listar_historial_pacientes),
             ("Listar Médicos", self.abrir_listar_medicos),
             ("Listar Pacientes", self.abrir_listarpacientes),
             ("Turnos por Médico", self.abrir_turnos_por_medico),
-            ("Ver Historial", self.abrir_ver_historial),
             ("Ver Turno", self.abrir_ver_turno),
             ("Cerrar sesión", self.cerrar_sesion)
         ]
@@ -96,19 +92,14 @@ class VentanaAdmin(tk.Toplevel):
 
     def abrir_atender_proximo(self):
         try:
-            atenderproximo()
+            # ✅ Le pasamos el ID del usuario (médico)
+            atenderproximo(self.usuario["id"])
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
     def abrir_historial_por_paciente(self):
         try:
             historialporpaciente()
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
-
-    def abrir_listar_historial_pacientes(self):
-        try:
-            listar_historial_pacientes()
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
@@ -127,12 +118,6 @@ class VentanaAdmin(tk.Toplevel):
     def abrir_turnos_por_medico(self):
         try:
             verturnopormedico()
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
-
-    def abrir_ver_historial(self):
-        try:
-            verhistorial()
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
@@ -157,6 +142,7 @@ class VentanaAdmin(tk.Toplevel):
                 ventana.destroy()
             except ValueError:
                 messagebox.showerror("Error", "Por favor ingrese un ID válido (número entero).")
+                ventana.destroy()
             except Exception as e:
                 messagebox.showerror("Error", str(e))
                 ventana.destroy()
@@ -165,7 +151,7 @@ class VentanaAdmin(tk.Toplevel):
         ventana = tk.Toplevel(self)
         ventana.title("Ver Turno")
         ventana.resizable(False, False)
-        ventana.grab_set()  # Bloquea interacción con la ventana principal
+        ventana.grab_set()
 
         ttk.Label(ventana, text="Ingrese ID del Turno:").pack(padx=10, pady=(10, 5))
         entrada_id = ttk.Entry(ventana)
