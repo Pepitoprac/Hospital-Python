@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 
+from VerTurno import verturno
 from AgregarMedico import agregarmedico
 from AgregarPaciente import agregar_paciente
 from AsignarTurno import asignarturno
@@ -11,7 +12,6 @@ from ListarMedico import listarmedico
 from ListarPaciente import listarpaciente
 from Turnoxmedico import verturnopormedico
 from VerHistorial import verhistorial
-from VerTurno import verturno
 
 
 class VentanaAdmin(tk.Toplevel):
@@ -38,7 +38,7 @@ class VentanaAdmin(tk.Toplevel):
             row=0, column=0, columnspan=3, pady=(0, 10)
         )
 
-        # Botones asociados a métodos que manejan excepciones
+        # Botones asociados a métodos
         botones_info = [
             ("Agregar Médico", self.abrir_agregar_medico),
             ("Agregar Paciente", self.abrir_agregar_paciente),
@@ -63,7 +63,7 @@ class VentanaAdmin(tk.Toplevel):
                 col = 0
                 fila += 1
 
-        # Menú Acciones con las mismas funciones que botones
+        # Menú Acciones
         menu_acciones.add_command(label="Agregar Médico", command=self.abrir_agregar_medico)
         menu_acciones.add_command(label="Agregar Paciente", command=self.abrir_agregar_paciente)
         menu_acciones.add_command(label="Asignar Turno (UI)", command=self.abrir_asignar_turno)
@@ -76,7 +76,6 @@ class VentanaAdmin(tk.Toplevel):
     def acerca_de(self):
         messagebox.showinfo("Acerca de", "Sistema de Turnos — Panel Admin")
 
-    # Métodos para abrir ventanas con manejo de excepciones
     def abrir_agregar_medico(self):
         try:
             agregarmedico()
@@ -138,10 +137,40 @@ class VentanaAdmin(tk.Toplevel):
             messagebox.showerror("Error", str(e))
 
     def abrir_ver_turno(self):
-        try:
-            verturno()
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
+        def consultar():
+            try:
+                id_turno = int(entrada_id.get())
+                datos = verturno(id_turno)
+                if datos:
+                    mensaje = (
+                        f"ID Turno: {datos[0]}\n"
+                        f"Paciente: {datos[1]}\n"
+                        f"Médico: {datos[2]}\n"
+                        f"Fecha: {datos[3]}\n"
+                        f"Hora: {datos[4]}\n"
+                        f"Urgencia: {'Sí' if datos[5] else 'No'}\n"
+                        f"Área: {datos[6]}"
+                    )
+                    messagebox.showinfo("Datos del Turno", mensaje)
+                else:
+                    messagebox.showwarning("Sin resultados", f"No se encontró el turno con ID {id_turno}")
+                ventana.destroy()
+            except ValueError:
+                messagebox.showerror("Error", "Por favor ingrese un ID válido (número entero).")
+            except Exception as e:
+                messagebox.showerror("Error", str(e))
+                ventana.destroy()
+
+        # Crear ventana emergente
+        ventana = tk.Toplevel(self)
+        ventana.title("Ver Turno")
+        ventana.resizable(False, False)
+        ventana.grab_set()  # Bloquea interacción con la ventana principal
+
+        ttk.Label(ventana, text="Ingrese ID del Turno:").pack(padx=10, pady=(10, 5))
+        entrada_id = ttk.Entry(ventana)
+        entrada_id.pack(padx=10, pady=5)
+        ttk.Button(ventana, text="Consultar", command=consultar).pack(pady=(5, 10))
 
     def cerrar_sesion(self):
         self.destroy()

@@ -4,14 +4,18 @@ import sqlite3
 def verturno(id_turno):
     conexion = sqlite3.connect("hospital.db")
     cursor = conexion.cursor()
+
+    print(f"Buscando turno con ID: {id_turno}")  # DEBUG
+    print("OPAAA")
+
     cursor.execute("""
-        SELECT t.id, p.nombre, m.nombre, t.fecha, t.hora, t.urgencia, a.descripcion
-        FROM turno t
-        JOIN paciente p ON t.paciente_id = p.id
-        JOIN medico m ON t.medico_id = m.id
-        JOIN area a ON t.area_id = a.id
-        WHERE t.id = ?
+        SELECT id, paciente_id, medico_id, fecha, hora, urgencia, area_id
+            FROM turno
+            WHERE id = ?;
     """, (id_turno,))
+    
     turno = cursor.fetchone()
+    print(f"Resultado: {turno}")  # DEBUG
+
     conexion.close()
     return turno

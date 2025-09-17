@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 from tkinter import messagebox, ttk
 import sqlite3
@@ -19,49 +20,75 @@ def agregarmedico():
     combo_especialidad = ttk.Combobox(ventana, state="readonly", width=27)
     combo_especialidad.grid(row=2, column=1, padx=10, pady=5)
 
+    # --- Ruta absoluta del DB ---
+    db_path = os.path.abspath("hospital.db")
+
     # --- Cargar especialidades desde la DB ---
-    conexion = sqlite3.connect("hospital.db")
-    cursor = conexion.cursor()
-    cursor.execute("SELECT id, nombre FROM especialidad")
-    especialidades = cursor.fetchall()  # [(1, 'Cardiología'), (2, 'Pediatría'), ...]
-    conexion.close()
+    try:
+        conexion = sqlite3.connect(db_path)
+        cursor = conexion.cursor()
+        cursor.execute("SELECT id, nombre FROM especialidad ORDER BY nombre")
+        especialidades = cursor.fetchall()
+    except Exception as e:
+        messagebox.showerror("Error DB", f"No se pudo leer la tabla 'especialidad'.\nRuta DB: {db_path}\n\n{e}")
+        return
+    finally:
+        try:
+            conexion.close()
+        except:
+            pass
 
-    # Guardamos en un diccionario { "Cardiología": 1, ... } para obtener el ID después
-    esp_dict = {nombre: id_ for id_, nombre in especialidades}
-    combo_especialidad["values"] = list(esp_dict.keys())
+    if not especialidades:
+        messagebox.showwarning("Sin especialidades",
+            f"No se encontraron especialidades en la base de datos.\nDB: {db_path}")
+        combo_especialidad["values"] = []
+        esp_dict = {}
+    else:
+        # Diccionario { "Cardiología": 1, "Pediatría": 2, ... }
+        esp_dict = {nombre: id_ for id_, nombre in especialidades}
+        combo_especialidad["values"] = list(esp_dict.keys())
+        combo_especialidad.set("Seleccionar especialidad")
 
-    # Función interna para guardar médico
+    # --- Función para guardar médico ---
     def guardar():
         nombre = entry_nombre.get().strip()
         matricula = entry_matricula.get().strip()
         esp_nombre = combo_especialidad.get().strip()
 
-        if not nombre or not matricula or not esp_nombre:
+        if not nombre or not matricula or not esp_nombre or esp_nombre == "Seleccionar especialidad":
             messagebox.showwarning("Error", "Todos los campos son obligatorios")
+            return
+
+        if esp_nombre not in esp_dict:
+            messagebox.showerror("Error", "Especialidad inválida. Seleccioná una opción de la lista.")
             return
 
         especialidad_id = esp_dict[esp_nombre]
 
-        conexion = sqlite3.connect("hospital.db")
-        cursor = conexion.cursor()
-
         try:
+            conexion = sqlite3.connect(db_path)
+            cursor = conexion.cursor()
             cursor.execute(
                 "INSERT INTO medico (nombre, matricula, especialidad_id) VALUES (?, ?, ?)",
                 (nombre, matricula, especialidad_id)
             )
             conexion.commit()
-            messagebox.showinfo("Éxito", "Médico agregado correctamente")
-
-            entry_nombre.delete(0, tk.END)
-            entry_matricula.delete(0, tk.END)
-            combo_especialidad.set("")
-
         except sqlite3.IntegrityError:
             messagebox.showerror("Error", "La matrícula ya existe o la especialidad no es válida")
+            return
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo guardar el médico:\n{e}")
+            return
         finally:
-            conexion.close()
+            try:
+                conexion.close()
+            except:
+                pass
+
+        messagebox.showinfo("Éxito", "Médico agregado correctamente")
+        entry_nombre.delete(0, tk.END)
+        entry_matricula.delete(0, tk.END)
+        combo_especialidad.set("Seleccionar especialidad")
 
     # Botón
     tk.Button(ventana, text="Registrar Médico", command=guardar).grid(row=3, column=0, columnspan=2, pady=10)
-    
