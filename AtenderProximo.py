@@ -9,8 +9,13 @@ def atenderproximo(medico_id):
     conexion = sqlite3.connect("hospital.db")
     cursor = conexion.cursor()
     cursor.execute("""
-        SELECT t.id, t.paciente_id, t.area_id, t.fecha, t.hora, t.urgencia
+        SELECT t.id, t.paciente_id, p.dni, p.nombre, 
+               t.matriculamedico, t.dnipaciente, 
+               t.area_id, a.descripcion, 
+               t.fecha, t.hora, t.urgencia
         FROM turno t
+        JOIN paciente p ON t.paciente_id = p.id
+        JOIN area a ON t.area_id = a.id
         WHERE t.medico_id = ?
         ORDER BY t.urgencia DESC, t.fecha, t.hora
         LIMIT 1
@@ -21,20 +26,31 @@ def atenderproximo(medico_id):
         conexion.close()
         return {"ok": False, "msg": "No hay turnos pendientes"}
 
-    turno_id, paciente_id, area_id, fecha, hora, urgencia = turno
+    (turno_id, paciente_id, dni_paciente, nombre_paciente, 
+     matricula_medico, dni_turno, 
+     area_id, area_desc, fecha, hora, urgencia) = turno
 
-    # Guardamos en historia clínica
+    # Guardar en historia clínica
     cursor.execute("""
         INSERT INTO historia_clinica (paciente_id, medico_id, area_id, fecha, hora, detalles_sintomas)
         VALUES (?, ?, ?, ?, ?, ?)
     """, (paciente_id, medico_id, area_id, fecha, hora, "Consulta realizada"))
-    
-    # Eliminamos turno
+
+    # Eliminar turno
     cursor.execute("DELETE FROM turno WHERE id = ?", (turno_id,))
     conexion.commit()
     conexion.close()
 
-    return {"ok": True, "msg": f"Turno {turno_id} atendido y registrado en historia clínica"}
+    return {
+        "ok": True,
+        "msg": f"Turno {turno_id} atendido y registrado en historia clínica",
+        "paciente": {"dni": dni_paciente, "nombre": nombre_paciente},
+        "medico": matricula_medico,
+        "area": area_desc,
+        "fecha": fecha,
+        "hora": hora,
+        "urgencia": urgencia
+    }
 
 
 # -------------------------
@@ -59,7 +75,15 @@ def ventana_atenderproximo():
 
         resultado = atenderproximo(medico_id)
         if resultado["ok"]:
-            messagebox.showinfo("Éxito", resultado["msg"])
+            resumen = (
+                f"✅ Turno atendido correctamente\n\n"
+                f"Paciente: {resultado['paciente']['dni']} - {resultado['paciente']['nombre']}\n"
+                f"Médico (Matrícula): {resultado['medico']}\n"
+                f"Área: {resultado['area']}\n"
+                f"Fecha: {resultado['fecha']}  Hora: {resultado['hora']}\n"
+                f"Urgencia: {resultado['urgencia']}"
+            )
+            messagebox.showinfo("Éxito", resumen)
             entry_medico.delete(0, tk.END)
         else:
             messagebox.showwarning("Aviso", resultado["msg"])
