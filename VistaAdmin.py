@@ -7,9 +7,9 @@ from AgregarPaciente import agregar_paciente
 from AsignarTurno import asignarturno
 from AtenderProximo import atenderproximo
 from HistorialxPaciente import historialporpaciente
-from ListarMedico import listarmedico
-from ListarPaciente import listarpaciente
-from Turnoxmedico import verturnopormedico
+from ListarMedico import ventana_listar_medicos
+from ListarPaciente import ventana_listar_pacientes
+from Turnoxmedico import ventana_turnos_por_medico
 
 
 class VentanaAdmin(tk.Toplevel):
@@ -105,19 +105,20 @@ class VentanaAdmin(tk.Toplevel):
 
     def abrir_listar_medicos(self):
         try:
-            listarmedico()
+            ventana_listar_medicos()
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
+
     def abrir_listarpacientes(self):
         try:
-            listarpaciente()
+            ventana_listar_pacientes()
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
     def abrir_turnos_por_medico(self):
         try:
-            verturnopormedico()
+            ventana_turnos_por_medico()
         except Exception as e:
             messagebox.showerror("Error", str(e))
 

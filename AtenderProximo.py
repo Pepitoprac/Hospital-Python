@@ -8,14 +8,16 @@ import sqlite3
 def atenderproximo(medico_id):
     conexion = sqlite3.connect("hospital.db")
     cursor = conexion.cursor()
+
+    # Buscar próximo turno del médico
     cursor.execute("""
-        SELECT t.id, t.paciente_id, p.dni, p.nombre, 
-               t.matriculamedico, t.dnipaciente, 
-               t.area_id, a.descripcion, 
+        SELECT t.id, t.paciente_id, p.dni, p.nombre,
+               m.matricula, a.descripcion,
                t.fecha, t.hora, t.urgencia
         FROM turno t
         JOIN paciente p ON t.paciente_id = p.id
-        JOIN area a ON t.area_id = a.id
+        JOIN medico m   ON t.medico_id   = m.id
+        JOIN area a     ON t.area_id     = a.id
         WHERE t.medico_id = ?
         ORDER BY t.urgencia DESC, t.fecha, t.hora
         LIMIT 1
@@ -26,23 +28,28 @@ def atenderproximo(medico_id):
         conexion.close()
         return {"ok": False, "msg": "No hay turnos pendientes"}
 
-    (turno_id, paciente_id, dni_paciente, nombre_paciente, 
-     matricula_medico, dni_turno, 
-     area_id, area_desc, fecha, hora, urgencia) = turno
+    (turno_id, paciente_id, dni_paciente, nombre_paciente,
+     matricula_medico, area_desc,
+     fecha, hora, urgencia) = turno
 
     # Guardar en historia clínica
     cursor.execute("""
-        INSERT INTO historia_clinica (paciente_id, medico_id, area_id, fecha, hora, detalles_sintomas)
-        VALUES (?, ?, ?, ?, ?, ?)
-    """, (paciente_id, medico_id, area_id, fecha, hora, "Consulta realizada"))
+        INSERT INTO historia_clinica 
+            (paciente_id, medico_id, area_id, fecha, hora, detalles_sintomas)
+        VALUES (?, ?, 
+                (SELECT area_id FROM turno WHERE id = ?), 
+                ?, ?, ?)
+    """, (paciente_id, medico_id, turno_id, fecha, hora, "Consulta realizada"))
 
-    # Eliminar turno
+    # Eliminar turno atendido
     cursor.execute("DELETE FROM turno WHERE id = ?", (turno_id,))
     conexion.commit()
     conexion.close()
 
+    # Devolver datos con el ID del turno incluido
     return {
         "ok": True,
+        "id": turno_id,
         "msg": f"Turno {turno_id} atendido y registrado en historia clínica",
         "paciente": {"dni": dni_paciente, "nombre": nombre_paciente},
         "medico": matricula_medico,
@@ -69,14 +76,15 @@ def ventana_atenderproximo():
     def procesar():
         medico_id = entry_medico.get().strip()
 
-        if not medico_id:
-            messagebox.showwarning("Error", "Debe ingresar el ID del médico")
+        if not medico_id.isdigit():
+            messagebox.showwarning("Error", "Debe ingresar un ID de médico válido (número)")
             return
 
-        resultado = atenderproximo(medico_id)
+        resultado = atenderproximo(int(medico_id))
         if resultado["ok"]:
             resumen = (
                 f"✅ Turno atendido correctamente\n\n"
+                f"ID Turno: {resultado['id']}\n"
                 f"Paciente: {resultado['paciente']['dni']} - {resultado['paciente']['nombre']}\n"
                 f"Médico (Matrícula): {resultado['medico']}\n"
                 f"Área: {resultado['area']}\n"
@@ -90,8 +98,8 @@ def ventana_atenderproximo():
 
     # Botón para atender
     tk.Button(
-        ventana, 
-        text="Atender Próximo", 
-        command=procesar, 
+        ventana,
+        text="Atender Próximo",
+        command=procesar,
         bg="lightblue"
     ).grid(row=1, column=0, columnspan=2, pady=10)
