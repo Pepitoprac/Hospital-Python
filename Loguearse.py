@@ -16,34 +16,46 @@ def loguearse():
         messagebox.showwarning("Error", "Usuario y contraseña requeridos")
         return
 
-    conexion = conectar_db()
-    cursor = conexion.cursor()
+    try:
+        conexion = conectar_db()
+        cursor = conexion.cursor()
 
-    cursor.execute("SELECT id, contrasena, rol, persona_id FROM usuario WHERE nombre = ?", (nombre,))
-    row = cursor.fetchone()
-    conexion.close()
+        cursor.execute("SELECT id, contrasena, rol FROM usuario WHERE nombre = ?", (nombre,))
+        row = cursor.fetchone()
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo conectar a la base de datos:\n{e}")
+        return
+    finally:
+        conexion.close()
 
     if not row:
         messagebox.showerror("Error", "Usuario no encontrado")
-    elif row[1] != contrasena:
-        messagebox.showerror("Error", "Contraseña incorrecta")
-    else:
-        usuario_id, _, rol, persona_id = row
-        if rol not in ("admin", "recepcionista"):
-            messagebox.showwarning("Acceso denegado", "Solo administradores y recepcionistas pueden acceder a esta vista.")
-            return
-        messagebox.showinfo("Bienvenido", f"Login correcto. Rol: {rol}")
-        root.withdraw()
+        return
 
-        datos_usuario = {
-            "id": usuario_id,
-            "nombre": nombre,
-            "rol": rol,
-            "persona_id": persona_id
-        }
-        global ventana_admin
-        ventana_admin = VentanaAdmin(root, datos_usuario)
-        ventana_admin.protocol("WM_DELETE_WINDOW", on_cerrar_admin)
+    usuario_id, password_db, rol = row
+    rol = rol.strip().lower()  # normalizamos el rol (espacios y mayúsculas)
+
+    if contrasena != password_db:
+        messagebox.showerror("Error", "Contraseña incorrecta")
+        return
+
+    if rol not in ("admin", "recepcionista"):
+        messagebox.showwarning("Acceso denegado", "Solo administradores y recepcionistas pueden acceder a esta vista.")
+        return
+
+    # Si todo está bien:
+    messagebox.showinfo("Bienvenido", f"Login correcto. Rol: {rol}")
+    root.withdraw()
+
+    datos_usuario = {
+        "id": usuario_id,
+        "nombre": nombre,
+        "rol": rol,
+    }
+
+    global ventana_admin
+    ventana_admin = VentanaAdmin(root, datos_usuario)
+    ventana_admin.protocol("WM_DELETE_WINDOW", on_cerrar_admin)
 
 def on_cerrar_admin():
     ventana_admin.destroy()
@@ -53,6 +65,7 @@ def limpiar_datos():
     entry_user.delete(0, tk.END)
     entry_pass.delete(0, tk.END)
 
+# --- Interfaz ---
 root = tk.Tk()
 root.title("Iniciar sesión")
 root.geometry("300x180")  # Ajusta el tamaño de la ventana
