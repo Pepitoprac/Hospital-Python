@@ -1,11 +1,10 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-
+from VistaMedico import ventana_medico
 from VerTurno import ventana_turnos
 from AgregarMedico import agregarmedico
 from AgregarPaciente import agregar_paciente
 from AsignarTurno import asignarturno
-from AtenderProximo import atenderproximo
 from HistorialxPaciente import historialporpaciente
 from ListarMedico import ventana_listar_medicos
 from ListarPaciente import ventana_listar_pacientes
@@ -41,7 +40,6 @@ class VentanaAdmin(tk.Toplevel):
             ("Agregar Médico", self.abrir_agregar_medico),
             ("Agregar Paciente", self.abrir_agregar_paciente),
             ("Asignar Turno (UI)", self.abrir_asignar_turno),
-            ("Atender Próximo", self.abrir_atender_proximo),
             ("Historial por Paciente", self.abrir_historial_por_paciente),
             ("Listar Médicos", self.abrir_listar_medicos),
             ("Listar Pacientes", self.abrir_listarpacientes),
@@ -87,13 +85,6 @@ class VentanaAdmin(tk.Toplevel):
     def abrir_asignar_turno(self):
         try:
             asignarturno()
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
-
-    def abrir_atender_proximo(self):
-        try:
-            # ✅ Le pasamos el ID del usuario (médico)
-            atenderproximo(self.usuario["id"])
         except Exception as e:
             messagebox.showerror("Error", str(e))
 

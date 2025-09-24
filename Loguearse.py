@@ -1,6 +1,7 @@
 import sqlite3
 import tkinter as tk
 from VistaAdmin import VentanaAdmin
+from VistaMedico import VistaMedico
 from tkinter import messagebox
 
 DB = "hospital.db"
@@ -8,7 +9,7 @@ DB = "hospital.db"
 def conectar_db():
     return sqlite3.connect(DB)
 
-def loguearse():
+"""def loguearse():
     nombre = entry_user.get().strip()
     contrasena = entry_pass.get().strip()
     
@@ -55,7 +56,7 @@ def loguearse():
 
     global ventana_admin
     ventana_admin = VentanaAdmin(root, datos_usuario)
-    ventana_admin.protocol("WM_DELETE_WINDOW", on_cerrar_admin)
+    ventana_admin.protocol("WM_DELETE_WINDOW", on_cerrar_admin)"""
 
 def on_cerrar_admin():
     ventana_admin.destroy()
@@ -64,6 +65,60 @@ def on_cerrar_admin():
 def limpiar_datos():
     entry_user.delete(0, tk.END)
     entry_pass.delete(0, tk.END)
+
+def loguearse():
+    nombre = entry_user.get().strip()
+    contrasena = entry_pass.get().strip()
+    
+    if not nombre or not contrasena:
+        messagebox.showwarning("Error", "Usuario y contraseña requeridos")
+        return
+
+    try:
+        conexion = conectar_db()
+        cursor = conexion.cursor()
+        cursor.execute("SELECT id, contrasena, rol FROM usuario WHERE nombre = ?", (nombre,))
+        row = cursor.fetchone()
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo conectar a la base de datos:\n{e}")
+        return
+    finally:
+        conexion.close()
+
+    if not row:
+        messagebox.showerror("Error", "Usuario no encontrado")
+        return
+
+    usuario_id, password_db, rol = row
+    rol = rol.strip().lower()
+
+    if contrasena != password_db:
+        messagebox.showerror("Error", "Contraseña incorrecta")
+        return
+
+    # --- Enrutamiento por rol ---
+    root.withdraw()
+    datos_usuario = {"id": usuario_id, "nombre": nombre, "rol": rol}
+
+    if rol in ("admin", "recepcionista"):
+        messagebox.showinfo("Bienvenido", f"Login correcto. Rol: {rol}")
+        global ventana_admin
+        ventana_admin = VentanaAdmin(root, datos_usuario)
+        ventana_admin.protocol("WM_DELETE_WINDOW", on_cerrar_admin)
+
+    elif rol == "medico":
+        messagebox.showinfo("Bienvenido", "Login correcto. Rol: médico")
+        # Abrir la vista de médico
+        ventana = VistaMedico(root, medico_id=usuario_id)
+        def on_cerrar_medico():
+            ventana.destroy()
+            root.deiconify()
+        ventana.protocol("WM_DELETE_WINDOW", on_cerrar_medico)
+
+    else:
+        messagebox.showwarning("Acceso denegado", "Tu usuario no tiene permisos para acceder.")
+        root.deiconify()
+
 
 # --- Interfaz ---
 root = tk.Tk()
