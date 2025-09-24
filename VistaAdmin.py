@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-from VistaMedico import ventana_medico
 from VerTurno import ventana_turnos
 from AgregarMedico import agregarmedico
 from AgregarPaciente import agregar_paciente

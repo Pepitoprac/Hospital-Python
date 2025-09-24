@@ -1,62 +1,13 @@
 import sqlite3
 import tkinter as tk
 from VistaAdmin import VentanaAdmin
-from VistaMedico import VistaMedico
+from VistaMedico import VentanaMedico
 from tkinter import messagebox
 
 DB = "hospital.db"
 
 def conectar_db():
     return sqlite3.connect(DB)
-
-"""def loguearse():
-    nombre = entry_user.get().strip()
-    contrasena = entry_pass.get().strip()
-    
-    if not nombre or not contrasena:
-        messagebox.showwarning("Error", "Usuario y contraseña requeridos")
-        return
-
-    try:
-        conexion = conectar_db()
-        cursor = conexion.cursor()
-
-        cursor.execute("SELECT id, contrasena, rol FROM usuario WHERE nombre = ?", (nombre,))
-        row = cursor.fetchone()
-    except Exception as e:
-        messagebox.showerror("Error", f"No se pudo conectar a la base de datos:\n{e}")
-        return
-    finally:
-        conexion.close()
-
-    if not row:
-        messagebox.showerror("Error", "Usuario no encontrado")
-        return
-
-    usuario_id, password_db, rol = row
-    rol = rol.strip().lower()  # normalizamos el rol (espacios y mayúsculas)
-
-    if contrasena != password_db:
-        messagebox.showerror("Error", "Contraseña incorrecta")
-        return
-
-    if rol not in ("admin", "recepcionista"):
-        messagebox.showwarning("Acceso denegado", "Solo administradores y recepcionistas pueden acceder a esta vista.")
-        return
-
-    # Si todo está bien:
-    messagebox.showinfo("Bienvenido", f"Login correcto. Rol: {rol}")
-    root.withdraw()
-
-    datos_usuario = {
-        "id": usuario_id,
-        "nombre": nombre,
-        "rol": rol,
-    }
-
-    global ventana_admin
-    ventana_admin = VentanaAdmin(root, datos_usuario)
-    ventana_admin.protocol("WM_DELETE_WINDOW", on_cerrar_admin)"""
 
 def on_cerrar_admin():
     ventana_admin.destroy()
@@ -109,7 +60,7 @@ def loguearse():
     elif rol == "medico":
         messagebox.showinfo("Bienvenido", "Login correcto. Rol: médico")
         # Abrir la vista de médico
-        ventana = VistaMedico(root, medico_id=usuario_id)
+        ventana = VentanaMedico(root,datos_usuario)
         def on_cerrar_medico():
             ventana.destroy()
             root.deiconify()
