@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from HistorialxPaciente import historialporpaciente 
-from VerTurno import ver_turnos
-from VerTurno import ventana_turnos_medico
+from TurnosAsignados import ventana_turnos_asignados
 
 """en historial paciente tendria que haber 2 botones uno para vizualizarlo y el otro para actualizarlo y que le haga un update"""
 class VentanaMedico(tk.Toplevel):
@@ -21,7 +20,7 @@ class VentanaMedico(tk.Toplevel):
         barra.add_cascade(label="Acciones", menu=menu_acciones)
         barra.add_cascade(label="Ayuda", menu=menu_ayuda)
 
-        menu_acciones.add_command(label="Ver Turnos", command=self.abrir_ver_turno)
+        menu_acciones.add_command(label="Turnos Asignados", command=self.abrir_turnos_asignados)
         menu_acciones.add_command(label="Historial por Paciente", command=self.abrir_historial_por_paciente)
         menu_acciones.add_separator()
         menu_acciones.add_command(label="Cerrar sesión", command=self.cerrar_sesion)
@@ -39,7 +38,7 @@ class VentanaMedico(tk.Toplevel):
         ).grid(row=0, column=0, columnspan=2, pady=(0, 10))
 
         botones = [
-            ("Ver Turnos", self.abrir_ver_turno),
+            ("Turnos Asignados", self.abrir_turnos_asignados),
             ("Historial por Paciente", self.abrir_historial_por_paciente),
             ("Cerrar sesión", self.cerrar_sesion),
         ]
@@ -55,11 +54,13 @@ class VentanaMedico(tk.Toplevel):
     def acerca_de(self):
         messagebox.showinfo("Acerca de", "Sistema de Turnos — Vista Médico")
 
-    def abrir_ver_turno(self):
+
+    def abrir_turnos_asignados(self):
         try:
-            ver_turnos(self)
+            # usa el id del médico logueado desde self.usuario
+            ventana_turnos_asignados(self.usuario["id"])
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudieron mostrar los turnos asignados.\n\n{e}")
 
     def abrir_historial_por_paciente(self):
         try:
@@ -70,12 +71,3 @@ class VentanaMedico(tk.Toplevel):
     def cerrar_sesion(self):
         self.destroy()
         self.maestro.deiconify()
-
-        # dentro de VentanaMedico
-    def abrir_ver_turno(self):
-        ventana_turnos_medico(self, medico_id=self.usuario["id"], solo_hoy=False)  # o True para solo hoy
-
-
-    
-
-    

@@ -24,7 +24,8 @@ def verturnopormedico(medico_id):
             FROM turno t
             JOIN paciente p ON t.paciente_id = p.id
             WHERE t.medico_id = ?
-            ORDER BY t.urgencia DESC, t.fecha, t.hora
+              AND t.fecha = date('now')  -- solo turnos de hoy
+            ORDER BY t.urgencia DESC, t.hora
         """, (medico_id,))
         return cursor.fetchall()
 
