@@ -4,9 +4,7 @@ import sqlite3
 
 DB_PATH = "hospital.db"
 
-# --------------------
-# Ver turnos por médico (todos)
-# --------------------
+# Función para obtener turnos de un médico (todos, sin filtro de fecha)
 def verturnopormedico_general(medico_id):
     with sqlite3.connect(DB_PATH) as conexion:
         cursor = conexion.cursor()
@@ -19,9 +17,7 @@ def verturnopormedico_general(medico_id):
         """, (medico_id,))
         return cursor.fetchall()
 
-# --------------------
-# Ventana Tkinter - Turnos del médico logueado (todos)
-# --------------------
+# Ventana para mostrar los turnos asignados a un médico
 def ventana_turnos_asignados(medico_id):
     ventana = tk.Toplevel()
     ventana.title("Turnos Asignados del Médico")
@@ -29,7 +25,6 @@ def ventana_turnos_asignados(medico_id):
 
     tk.Label(ventana, text="Turnos asignados", font=("Arial", 12, "bold")).pack(pady=5)
 
-    # Tabla de turnos
     columnas = ("ID Turno", "Paciente", "Fecha", "Hora", "Urgencia")
     tabla = ttk.Treeview(ventana, columns=columnas, show="headings", height=15)
     for col in columnas:
@@ -37,7 +32,6 @@ def ventana_turnos_asignados(medico_id):
         tabla.column(col, anchor="center", width=150)
     tabla.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # Función para cargar turnos
     def cargar_turnos():
         for row in tabla.get_children():
             tabla.delete(row)
@@ -48,11 +42,9 @@ def ventana_turnos_asignados(medico_id):
             for turno in turnos:
                 tabla.insert("", tk.END, values=turno)
         else:
-            # Mostrar mensaje solo si no hay turnos al cargar por primera vez
             messagebox.showinfo("Sin turnos", "No tenés turnos asignados.")
 
-    # Botón actualizar
     tk.Button(ventana, text="Actualizar", command=cargar_turnos, bg="lightgreen").pack(pady=5)
 
-    # Cargar automáticamente al abrir
     cargar_turnos()
+

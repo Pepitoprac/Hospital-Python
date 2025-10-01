@@ -40,6 +40,7 @@ class VentanaAdmin(tk.Toplevel):
             ("Agregar Paciente", self.abrir_agregar_paciente),
             ("Asignar Turno (UI)", self.abrir_asignar_turno),
             ("Historial por Paciente", self.abrir_historial_por_paciente),
+            ("Historial Clínico (Nuevo)", self.abrir_historial_clinico_completo),
             ("Listar Médicos", self.abrir_listar_medicos),
             ("Listar Pacientes", self.abrir_listarpacientes),
             ("Turnos por Médico", self.abrir_turnos_por_medico),
@@ -60,6 +61,7 @@ class VentanaAdmin(tk.Toplevel):
         menu_acciones.add_command(label="Agregar Médico", command=self.abrir_agregar_medico)
         menu_acciones.add_command(label="Agregar Paciente", command=self.abrir_agregar_paciente)
         menu_acciones.add_command(label="Asignar Turno (UI)", command=self.abrir_asignar_turno)
+        menu_acciones.add_command(label="Historial Clínico (Nuevo)", command=self.abrir_historial_clinico_completo)
         menu_acciones.add_separator()
         menu_acciones.add_command(label="Cerrar sesión", command=self.cerrar_sesion)
 
@@ -93,12 +95,17 @@ class VentanaAdmin(tk.Toplevel):
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
+    def abrir_historial_clinico_completo(self):
+        try:
+            ventana_listar_pacientes()
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
     def abrir_listar_medicos(self):
         try:
             ventana_listar_medicos()
         except Exception as e:
             messagebox.showerror("Error", str(e))
-
 
     def abrir_listarpacientes(self):
         try:
