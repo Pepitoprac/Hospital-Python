@@ -20,12 +20,17 @@ def verturnopormedico(medico_id):
     with sqlite3.connect(DB_PATH) as conexion:
         cursor = conexion.cursor()
         cursor.execute("""
-            SELECT t.id, p.nombre, t.fecha, t.hora, t.urgencia
+            SELECT 
+                t.id AS turno_id,
+                p.nombre AS paciente,
+                t.fecha,
+                t.hora,
+                p.urgencia
             FROM turno t
             JOIN paciente p ON t.paciente_id = p.id
             WHERE t.medico_id = ?
               AND t.fecha = date('now')  -- solo turnos de hoy
-            ORDER BY t.urgencia DESC, t.hora
+            ORDER BY p.urgencia DESC, t.hora
         """, (medico_id,))
         return cursor.fetchall()
 
@@ -74,13 +79,12 @@ def ventana_turnos_por_medico():
 
         if turnos:
             for turno in turnos:
-                tabla.insert("", tk.END, values=turno)
+                turno_id, paciente, fecha, hora, urgencia = turno
+                urgencia = urgencia if urgencia is not None else "—"
+                tabla.insert("", tk.END, values=(turno_id, paciente, fecha, hora, urgencia))
         else:
-            messagebox.showinfo("Sin turnos", f"El médico {seleccionado} no tiene turnos registrados")
+            messagebox.showinfo("Sin turnos", f"El médico {seleccionado} no tiene turnos para hoy")
 
-    # Botón consultar
+    # Botones
     tk.Button(ventana, text="Ver Turnos", command=cargar_turnos, bg="lightblue").pack(pady=5)
-
-    # Botón actualizar
     tk.Button(ventana, text="Actualizar", command=cargar_turnos, bg="lightgreen").pack(pady=5)
-

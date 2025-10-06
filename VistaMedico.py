@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from HistorialxPaciente import historialporpaciente 
-from TurnosAsignados import ventana_turnos_asignados
+from HistorialxPaciente import historialporpaciente
+from TurnosAsignados import ventana_turnos_medico_logueado
 
-"""en historial paciente tendria que haber 2 botones uno para vizualizarlo y el otro para actualizarlo y que le haga un update"""
 class VentanaMedico(tk.Toplevel):
     def __init__(self, maestro, usuario):
         super().__init__(maestro)
@@ -54,15 +53,20 @@ class VentanaMedico(tk.Toplevel):
     def acerca_de(self):
         messagebox.showinfo("Acerca de", "Sistema de Turnos — Vista Médico")
 
-
     def abrir_turnos_asignados(self):
+        """Abre la ventana de turnos según el médico logueado"""
         try:
-            # usa el id del médico logueado desde self.usuario
-            ventana_turnos_asignados(self.usuario["id"])
+            # Si tu función usa ID:
+            ventana_turnos_medico_logueado(self.usuario["id"], self.usuario["nombre"])
+            
+            # Si usa matrícula, cambiá por:
+            # ventana_turnos_medico_logueado(self.usuario["matricula"], self.usuario["nombre"])
+
         except Exception as e:
             messagebox.showerror("Error", f"No se pudieron mostrar los turnos asignados.\n\n{e}")
 
     def abrir_historial_por_paciente(self):
+        """Abre la ventana de historial"""
         try:
             historialporpaciente()
         except Exception as e:

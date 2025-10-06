@@ -1,12 +1,14 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 import sqlite3
 
 def agregar_paciente():
     ventana = tk.Toplevel()
     ventana.title("Agregar Paciente [Panel Admin]")
 
-    # Labels y Entrys
+    # -------------------------
+    # Campos del formulario
+    # -------------------------
     tk.Label(ventana, text="DNI").grid(row=0, column=0, padx=10, pady=5, sticky="w")
     entry_dni = tk.Entry(ventana)
     entry_dni.grid(row=0, column=1, padx=10, pady=5)
@@ -19,35 +21,62 @@ def agregar_paciente():
     entry_fecha = tk.Entry(ventana)
     entry_fecha.grid(row=2, column=1, padx=10, pady=5)
 
-    # Función interna para guardar paciente
+    # -------------------------
+    # Urgencia (Combobox 1–4)
+    # -------------------------
+    tk.Label(ventana, text="Urgencia").grid(row=3, column=0, padx=10, pady=5, sticky="w")
+
+    urgencia_map = {
+        "1 - Leve": 1,
+        "2 - Moderada": 2,
+        "3 - Grave": 3,
+        "4 - Crítica": 4
+    }
+
+    combo_urgencia = ttk.Combobox(ventana, state="readonly", width=20)
+    combo_urgencia["values"] = list(urgencia_map.keys())
+    combo_urgencia.grid(row=3, column=1, padx=10, pady=5)
+
+    # -------------------------
+    # Guardar paciente
+    # -------------------------
     def guardar():
         dni = entry_dni.get().strip()
         nombre = entry_nombre.get().strip()
         fecha = entry_fecha.get().strip()
+        urgencia_sel = combo_urgencia.get().strip()
 
-        if not dni or not nombre or not fecha:
+        if not dni or not nombre or not fecha or not urgencia_sel:
             messagebox.showwarning("Error", "Todos los campos son obligatorios")
             return
+
+        urgencia_valor = urgencia_map[urgencia_sel]
 
         conexion = sqlite3.connect("hospital.db")
         cursor = conexion.cursor()
 
         try:
             cursor.execute(
-                "INSERT INTO paciente (dni, nombre, fechaNacimiento) VALUES (?, ?, ?)",
-                (dni, nombre, fecha)
+                "INSERT INTO paciente (dni, nombre, fechaNacimiento, urgencia) VALUES (?, ?, ?, ?)",
+                (dni, nombre, fecha, urgencia_valor)
             )
             conexion.commit()
             messagebox.showinfo("Éxito", "Paciente agregado correctamente")
 
+            # Limpiar campos
             entry_dni.delete(0, tk.END)
             entry_nombre.delete(0, tk.END)
             entry_fecha.delete(0, tk.END)
+            combo_urgencia.set("")
 
         except sqlite3.IntegrityError:
             messagebox.showerror("Error", "El DNI ya existe")
         finally:
             conexion.close()
 
-    # Botón
-    tk.Button(ventana, text="Registrar Paciente", command=guardar).grid(row=3, column=0, columnspan=2, pady=10)
+    # -------------------------
+    # Botón Registrar
+    # -------------------------
+    tk.Button(ventana, text="Registrar Paciente", command=guardar, bg="lightgreen").grid(
+        row=4, column=0, columnspan=2, pady=10
+    )

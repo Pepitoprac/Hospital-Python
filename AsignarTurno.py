@@ -18,19 +18,38 @@ def asignarturno():
 
     with sqlite3.connect(DB_PATH) as conexion:
         cursor = conexion.cursor()
-        cursor.execute("SELECT id, dni, nombre FROM paciente")
+        cursor.execute("SELECT id, dni, nombre, urgencia FROM paciente")
         pacientes = cursor.fetchall()
 
-    paciente_map = {f"{p[1]} - {p[2]}": (p[0], p[1]) for p in pacientes}  # (id, dni)
+    paciente_map = {f"{p[1]} - {p[2]}": (p[0], p[1], p[3]) for p in pacientes}  # id, dni, urgencia
     combo_paciente["values"] = list(paciente_map.keys())
+
+    # -----------------------------
+    # Mostrar urgencia del paciente
+    # -----------------------------
+    tk.Label(ventana, text="Urgencia del paciente").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+    entry_urgencia = tk.Entry(ventana, state="readonly", width=40)
+    entry_urgencia.grid(row=1, column=1, padx=10, pady=5)
+
+    def mostrar_urgencia(event):
+        seleccionado = combo_paciente.get()
+        if not seleccionado:
+            return
+        _, _, urgencia = paciente_map[seleccionado]
+        entry_urgencia.config(state="normal")
+        entry_urgencia.delete(0, tk.END)
+        entry_urgencia.insert(0, urgencia if urgencia else "—")
+        entry_urgencia.config(state="readonly")
+
+    combo_paciente.bind("<<ComboboxSelected>>", mostrar_urgencia)
 
     # -----------------------------
     # Médico (combobox matrícula - nombre)
     # -----------------------------
-    tk.Label(ventana, text="Médico (Matrícula - Nombre)").grid(row=1, column=0, padx=10, pady=5, sticky="w")
+    tk.Label(ventana, text="Médico (Matrícula - Nombre)").grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
     combo_medico = ttk.Combobox(ventana, state="readonly", width=40)
-    combo_medico.grid(row=1, column=1, padx=10, pady=5)
+    combo_medico.grid(row=2, column=1, padx=10, pady=5)
 
     with sqlite3.connect(DB_PATH) as conexion:
         cursor = conexion.cursor()
@@ -41,12 +60,12 @@ def asignarturno():
     combo_medico["values"] = list(medico_map.keys())
 
     # -----------------------------
-    # Área (se carga automáticamente según médico)
+    # Área (automática según médico)
     # -----------------------------
-    tk.Label(ventana, text="Área").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+    tk.Label(ventana, text="Área").grid(row=3, column=0, padx=10, pady=5, sticky="w")
 
     entry_area = tk.Entry(ventana, state="readonly", width=40)
-    entry_area.grid(row=2, column=1, padx=10, pady=5)
+    entry_area.grid(row=3, column=1, padx=10, pady=5)
 
     def actualizar_area(event):
         seleccionado = combo_medico.get()
@@ -75,20 +94,13 @@ def asignarturno():
     # -----------------------------
     # Fecha y Hora
     # -----------------------------
-    tk.Label(ventana, text="Fecha (YYYY-MM-DD)").grid(row=3, column=0, padx=10, pady=5, sticky="w")
+    tk.Label(ventana, text="Fecha (YYYY-MM-DD)").grid(row=4, column=0, padx=10, pady=5, sticky="w")
     entry_fecha = tk.Entry(ventana)
-    entry_fecha.grid(row=3, column=1, padx=10, pady=5)
+    entry_fecha.grid(row=4, column=1, padx=10, pady=5)
 
-    tk.Label(ventana, text="Hora (HH:MM)").grid(row=4, column=0, padx=10, pady=5, sticky="w")
+    tk.Label(ventana, text="Hora (HH:MM)").grid(row=5, column=0, padx=10, pady=5, sticky="w")
     entry_hora = tk.Entry(ventana)
-    entry_hora.grid(row=4, column=1, padx=10, pady=5)
-
-    # -----------------------------
-    # Urgencia (texto)
-    # -----------------------------
-    tk.Label(ventana, text="Urgencia (texto)").grid(row=5, column=0, padx=10, pady=5, sticky="w")
-    entry_urgencia = tk.Entry(ventana)
-    entry_urgencia.grid(row=5, column=1, padx=10, pady=5)
+    entry_hora.grid(row=5, column=1, padx=10, pady=5)
 
     # -----------------------------
     # Guardar turno
@@ -98,22 +110,21 @@ def asignarturno():
         medico_sel = combo_medico.get().strip()
         fecha = entry_fecha.get().strip()
         hora = entry_hora.get().strip()
-        urgencia = entry_urgencia.get().strip()
         area_id = getattr(entry_area, "area_id", None)
 
-        if not paciente_sel or not medico_sel or not fecha or not hora or not urgencia or not area_id:
+        if not paciente_sel or not medico_sel or not fecha or not hora or not area_id:
             messagebox.showwarning("Error", "Todos los campos son obligatorios")
             return
 
-        paciente_id, dni_paciente = paciente_map[paciente_sel]
+        paciente_id, dni_paciente, _ = paciente_map[paciente_sel]
         medico_id, matricula, _ = medico_map[medico_sel]
 
         with sqlite3.connect(DB_PATH) as conexion:
             cursor = conexion.cursor()
             cursor.execute("""
-                INSERT INTO turno (paciente_id, medico_id, fecha, hora, urgencia, area_id, matriculamedico, dnipaciente)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """, (paciente_id, medico_id, fecha, hora, urgencia, area_id, matricula, dni_paciente))
+                INSERT INTO turno (paciente_id, medico_id, fecha, hora, area_id, matriculamedico, dnipaciente)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (paciente_id, medico_id, fecha, hora, area_id, matricula, dni_paciente))
             conexion.commit()
 
         messagebox.showinfo("Éxito", "Turno asignado correctamente")
@@ -126,7 +137,9 @@ def asignarturno():
         entry_area.config(state="readonly")
         entry_fecha.delete(0, tk.END)
         entry_hora.delete(0, tk.END)
+        entry_urgencia.config(state="normal")
         entry_urgencia.delete(0, tk.END)
+        entry_urgencia.config(state="readonly")
 
     # -----------------------------
     # Botón Confirmar Turno

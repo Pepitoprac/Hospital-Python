@@ -10,7 +10,11 @@ DB_PATH = "hospital.db"
 def listarpaciente():
     with sqlite3.connect(DB_PATH, timeout=10) as conexion:
         cursor = conexion.cursor()
-        cursor.execute("SELECT id, dni, nombre, fechaNacimiento, urgencia FROM paciente")
+        cursor.execute("""
+            SELECT id, dni, nombre, fechaNacimiento, urgencia
+            FROM paciente
+            ORDER BY id
+        """)
         pacientes = cursor.fetchall()
     return pacientes
 
@@ -42,7 +46,10 @@ def ventana_listar_pacientes():
         pacientes = listarpaciente()
         if pacientes:
             for paciente in pacientes:
-                tabla.insert("", tk.END, values=paciente)
+                # Si no tiene urgencia, mostrar guion
+                id, dni, nombre, fecha, urgencia = paciente
+                urgencia = urgencia if urgencia is not None else "—"
+                tabla.insert("", tk.END, values=(id, dni, nombre, fecha, urgencia))
         else:
             messagebox.showinfo("Sin resultados", "No hay pacientes registrados en la base de datos")
 
@@ -60,17 +67,21 @@ def ventana_listar_pacientes():
 
         ventana_edit = tk.Toplevel(ventana)
         ventana_edit.title(f"Asignar Urgencia - {nombre}")
-        ventana_edit.geometry("300x150")
+        ventana_edit.geometry("300x180")
 
-        tk.Label(ventana_edit, text="Nivel de Urgencia (1-5):").pack(pady=10)
-        entry_urgencia = tk.Entry(ventana_edit)
-        entry_urgencia.pack(pady=5)
-        entry_urgencia.insert(0, urgencia if urgencia else "")
+        tk.Label(ventana_edit, text="Nivel de Urgencia (1: Baja | 2: Media | 3: Alta)").pack(pady=10)
+
+        # Combobox en lugar de Entry
+        opciones_urgencia = ["1", "2", "3"]
+        combo_urgencia = ttk.Combobox(ventana_edit, values=opciones_urgencia, state="readonly")
+        combo_urgencia.pack(pady=5)
+        if urgencia in opciones_urgencia:
+            combo_urgencia.set(urgencia)
 
         def guardar():
-            nueva_urgencia = entry_urgencia.get().strip()
-            if not nueva_urgencia.isdigit() or not (1 <= int(nueva_urgencia) <= 5):
-                messagebox.showerror("Error", "La urgencia debe ser un número entre 1 y 5")
+            nueva_urgencia = combo_urgencia.get().strip()
+            if nueva_urgencia not in ["1", "2", "3"]:
+                messagebox.showerror("Error", "Seleccione una urgencia válida (1, 2 o 3)")
                 return
 
             try:
@@ -78,7 +89,7 @@ def ventana_listar_pacientes():
                     cursor = conexion.cursor()
                     cursor.execute(
                         "UPDATE paciente SET urgencia = ? WHERE id = ?",
-                        (nueva_urgencia, paciente_id)
+                        (int(nueva_urgencia), paciente_id)
                     )
                     conexion.commit()
 
@@ -93,8 +104,10 @@ def ventana_listar_pacientes():
     # -------------------
     # Botones
     # -------------------
-    tk.Button(ventana, text="Actualizar Lista", command=cargar_datos, bg="lightblue").pack(pady=5)
-    tk.Button(ventana, text="Asignar Urgencia", command=editar_urgencia, bg="lightyellow").pack(pady=5)
+    boton_frame = tk.Frame(ventana)
+    boton_frame.pack(pady=5)
+
+    tk.Button(boton_frame, text="Actualizar Lista", command=cargar_datos, bg="lightblue", width=18).grid(row=0, column=0, padx=5)
+    tk.Button(boton_frame, text="Asignar Urgencia", command=editar_urgencia, bg="lightyellow", width=18).grid(row=0, column=1, padx=5)
 
     cargar_datos()
-
