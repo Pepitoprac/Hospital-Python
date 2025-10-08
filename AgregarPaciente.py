@@ -42,6 +42,11 @@ def agregar_paciente():
     # -------------------------
     def guardar():
         dni = entry_dni.get().strip()
+
+        if(len(dni) > 7):
+            raise sqlite3.DatabaseError("El DNI debe tener 8 caracteres")
+        
+
         nombre = entry_nombre.get().strip()
         fecha = entry_fecha.get().strip()
         urgencia_sel = combo_urgencia.get().strip()
@@ -68,6 +73,8 @@ def agregar_paciente():
             entry_nombre.delete(0, tk.END)
             entry_fecha.delete(0, tk.END)
             combo_urgencia.set("")
+
+            
 
         except sqlite3.IntegrityError:
             messagebox.showerror("Error", "El DNI ya existe")

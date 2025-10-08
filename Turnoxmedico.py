@@ -33,7 +33,6 @@ def verturnopormedico(medico_id):
             ORDER BY p.urgencia DESC, t.hora
         """, (medico_id,))
         return cursor.fetchall()
-
 # --------------------
 # Ventana Tkinter
 # --------------------

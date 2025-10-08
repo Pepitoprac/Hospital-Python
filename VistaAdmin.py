@@ -120,3 +120,5 @@ class VentanaAdmin(tk.Toplevel):
     def cerrar_sesion(self):
         self.destroy()
         self.maestro.deiconify()
+
+    

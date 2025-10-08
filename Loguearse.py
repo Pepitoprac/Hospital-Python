@@ -96,4 +96,5 @@ btn_login.pack(pady=(15, 5))
 btn_limpiar = tk.Button(root, text="Limpiar datos", command=limpiar_datos)
 btn_limpiar.pack()
 
+
 root.mainloop()

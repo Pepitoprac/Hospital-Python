@@ -15,9 +15,10 @@ class Paciente:
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS paciente (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                dni TEXT NOT NULL UNIQUE,
+                dni TEXT NOT NULL CHECK (length(dni) <= 8) UNIQUE,
                 nombre TEXT NOT NULL,
-                fechaNacimiento TEXT
+                fechaNacimiento TEXT NOT NULL,
+                urgencia INTEGER CHECK (urgencia BETWEEN 1 AND 4)
             );
         """)
         
