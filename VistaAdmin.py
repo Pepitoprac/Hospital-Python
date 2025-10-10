@@ -8,7 +8,7 @@ from HistorialxPaciente import historialporpaciente
 from ListarMedico import ventana_listar_medicos
 from ListarPaciente import ventana_listar_pacientes
 from Turnoxmedico import ventana_turnos_por_medico
-
+from AgregarUsuario import agregar_usuario  # <--- Importamos agregar_usuario
 
 class VentanaAdmin(tk.Toplevel):
     def __init__(self, maestro, usuario):
@@ -38,6 +38,7 @@ class VentanaAdmin(tk.Toplevel):
         botones_info = [
             ("Agregar Médico", self.abrir_agregar_medico),
             ("Agregar Paciente", self.abrir_agregar_paciente),
+            ("Agregar Usuario", self.abrir_agregar_usuario),  # <--- Botón nuevo
             ("Asignar Turno", self.abrir_asignar_turno),
             ("Historial por Paciente", self.abrir_historial_por_paciente),
             ("Listar Médicos", self.abrir_listar_medicos),
@@ -81,6 +82,12 @@ class VentanaAdmin(tk.Toplevel):
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
+    def abrir_agregar_usuario(self):  # <--- Nuevo método
+        try:
+            agregar_usuario(parent=self)
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
     def abrir_asignar_turno(self):
         try:
             asignarturno()
@@ -120,5 +127,3 @@ class VentanaAdmin(tk.Toplevel):
     def cerrar_sesion(self):
         self.destroy()
         self.maestro.deiconify()
-
-    

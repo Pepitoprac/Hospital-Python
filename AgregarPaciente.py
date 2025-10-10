@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 import sqlite3
+from tkcalendar import DateEntry  # <-- Importar
+from datetime import datetime
 
 def agregar_paciente():
     ventana = tk.Toplevel()
@@ -17,8 +19,8 @@ def agregar_paciente():
     entry_nombre = tk.Entry(ventana)
     entry_nombre.grid(row=1, column=1, padx=10, pady=5)
 
-    tk.Label(ventana, text="Fecha Nacimiento (YYYY-MM-DD)").grid(row=2, column=0, padx=10, pady=5, sticky="w")
-    entry_fecha = tk.Entry(ventana)
+    tk.Label(ventana, text="Fecha Nacimiento").grid(row=2, column=0, padx=10, pady=5, sticky="w")
+    entry_fecha = DateEntry(ventana, date_pattern="yyyy-mm-dd")  # <-- Calendario
     entry_fecha.grid(row=2, column=1, padx=10, pady=5)
 
     # -------------------------
@@ -36,22 +38,23 @@ def agregar_paciente():
     combo_urgencia = ttk.Combobox(ventana, state="readonly", width=20)
     combo_urgencia["values"] = list(urgencia_map.keys())
     combo_urgencia.grid(row=3, column=1, padx=10, pady=5)
+    combo_urgencia.set(list(urgencia_map.keys())[0])  # Valor por defecto
 
     # -------------------------
     # Guardar paciente
     # -------------------------
     def guardar():
         dni = entry_dni.get().strip()
-
-        if(len(dni) > 7):
-            raise sqlite3.DatabaseError("El DNI debe tener 8 caracteres")
-        
-
         nombre = entry_nombre.get().strip()
-        fecha = entry_fecha.get().strip()
+        fecha = entry_fecha.get_date().strftime("%Y-%m-%d")  # <-- Obtenemos la fecha del calendario
         urgencia_sel = combo_urgencia.get().strip()
 
-        if not dni or not nombre or not fecha or not urgencia_sel:
+        # Validaciones
+        if len(dni) != 8 or not dni.isdigit():
+            messagebox.showerror("Error", "¡El DNI debe tener 8 dígitos!")
+            return
+
+        if not nombre or not urgencia_sel:
             messagebox.showwarning("Error", "Todos los campos son obligatorios")
             return
 
@@ -71,10 +74,8 @@ def agregar_paciente():
             # Limpiar campos
             entry_dni.delete(0, tk.END)
             entry_nombre.delete(0, tk.END)
-            entry_fecha.delete(0, tk.END)
-            combo_urgencia.set("")
-
-            
+            entry_fecha.set_date(datetime.today())
+            combo_urgencia.set(list(urgencia_map.keys())[0])
 
         except sqlite3.IntegrityError:
             messagebox.showerror("Error", "El DNI ya existe")
