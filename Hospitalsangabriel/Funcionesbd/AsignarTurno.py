@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 import sqlite3
+from tkcalendar import DateEntry  # <-- Importar
 
 DB_PATH = "hospital.db"
 
@@ -95,7 +96,7 @@ def asignarturno():
     # Fecha y Hora
     # -----------------------------
     tk.Label(ventana, text="Fecha (YYYY-MM-DD)").grid(row=4, column=0, padx=10, pady=5, sticky="w")
-    entry_fecha = tk.Entry(ventana)
+    entry_fecha = DateEntry(ventana, date_pattern="yyyy-mm-dd")  # <-- Calendario
     entry_fecha.grid(row=4, column=1, padx=10, pady=5)
 
     tk.Label(ventana, text="Hora (HH:MM)").grid(row=5, column=0, padx=10, pady=5, sticky="w")
