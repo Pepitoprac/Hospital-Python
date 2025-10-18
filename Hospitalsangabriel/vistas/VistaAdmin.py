@@ -1,14 +1,14 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-from VerTurno import ventana_turnos
-from AgregarMedico import agregarmedico
-from AgregarPaciente import agregar_paciente
-from AsignarTurno import asignarturno
-from HistorialxPaciente import historialporpaciente
-from ListarMedico import ventana_listar_medicos
-from ListarPaciente import ventana_listar_pacientes
-from Turnoxmedico import ventana_turnos_por_medico
-from AgregarUsuario import agregar_usuario  # <--- Importamos agregar_usuario
+from Funcionesbd.VerTurno import ventana_turnos
+from Funcionesbd.AgregarMedico import agregarmedico
+from Funcionesbd.AgregarPaciente import agregar_paciente
+from Funcionesbd.AsignarTurno import asignarturno
+from Funcionesbd.HistorialxPaciente import historialporpaciente
+from Funcionesbd.ListarMedico import ventana_listar_medicos
+from Funcionesbd.ListarPaciente import ventana_listar_pacientes
+from Funcionesbd.Turnoxmedico import ventana_turnos_por_medico
+from Funcionesbd.AgregarUsuario import agregar_usuario  # <--- Importamos agregar_usuario
 
 class VentanaAdmin(tk.Toplevel):
     def __init__(self, maestro, usuario):

@@ -1,7 +1,7 @@
 import sqlite3
 import tkinter as tk
-from VistaAdmin import VentanaAdmin
-from VistaMedico import VentanaMedico
+from vistas.VistaAdmin import VentanaAdmin
+from vistas.VistaMedico import VentanaMedico
 from tkinter import messagebox
 
 DB = "hospital.db"

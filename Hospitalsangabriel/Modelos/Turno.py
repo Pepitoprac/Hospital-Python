@@ -1,6 +1,6 @@
-from Paciente import Paciente
-from Medico import Medico
-from Area import Area
+from Modelos.Paciente import Paciente
+from Modelos.Medico import Medico
+from Modelos.Area import Area
 import sqlite3
 
 class Turno:
