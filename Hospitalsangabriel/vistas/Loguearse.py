@@ -4,7 +4,7 @@ from vistas.VistaAdmin import VentanaAdmin
 from vistas.VistaMedico import VentanaMedico
 from tkinter import messagebox
 
-DB = "hospital.db"
+DB = "Hospitalsangabriel/test/hospital.db"
 
 def conectar_db():
     return sqlite3.connect(DB)
