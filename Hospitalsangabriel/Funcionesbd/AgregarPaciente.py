@@ -7,6 +7,7 @@ from rutadb import DB as RutaDb
 
 DB_PATH = RutaDb
 
+DB_PATH = RutaDb
 def agregar_paciente():
     ventana = tk.Toplevel()
     ventana.title("Agregar Paciente [Panel Admin]")
@@ -63,7 +64,7 @@ def agregar_paciente():
 
         urgencia_valor = urgencia_map[urgencia_sel]
 
-        conexion = sqlite3.connect("hospital.db")
+        conexion = sqlite3.connect(RutaDb)
         cursor = conexion.cursor()
 
         try:

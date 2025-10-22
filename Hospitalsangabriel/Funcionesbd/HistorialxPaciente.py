@@ -12,7 +12,7 @@ def historialporpaciente():
             messagebox.showwarning("Error", "Ingrese un DNI.")
             return
 
-        conn = sqlite3.connect(DB_PATH)
+        conn = sqlite3.connect(RutaDb)
         cursor = conn.cursor()
         cursor.execute("""
         SELECT p.nombre, hc.fecha, hc.hora, a.descripcion, m.nombre, hc.detalles_sintomas
@@ -36,7 +36,7 @@ def historialporpaciente():
                 tabla.insert("", "end", values=r)
         else:
             # Buscar si existe el paciente
-            conn = sqlite3.connect(DB_PATH)
+            conn = sqlite3.connect(RutaDb)
             cursor = conn.cursor()
             cursor.execute("SELECT nombre FROM paciente WHERE dni = ?", (dni,))
             paciente = cursor.fetchone()

@@ -17,7 +17,7 @@ def asignarturno():
     combo_paciente = ttk.Combobox(ventana, state="readonly", width=40)
     combo_paciente.grid(row=0, column=1, padx=10, pady=5)
 
-    with sqlite3.connect(DB_PATH) as conexion:
+    with sqlite3.connect(RutaDb) as conexion:
         cursor = conexion.cursor()
         cursor.execute("SELECT id, dni, nombre, urgencia FROM paciente")
         pacientes = cursor.fetchall()
@@ -120,7 +120,7 @@ def asignarturno():
         paciente_id, dni_paciente, _ = paciente_map[paciente_sel]
         medico_id, matricula, _ = medico_map[medico_sel]
 
-        with sqlite3.connect(DB_PATH) as conexion:
+        with sqlite3.connect(RutaDb) as conexion:
             cursor = conexion.cursor()
             cursor.execute("""
                 INSERT INTO turno (paciente_id, medico_id, fecha, hora, area_id, matriculamedico, dnipaciente)

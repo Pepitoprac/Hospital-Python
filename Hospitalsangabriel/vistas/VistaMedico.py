@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from Funcionesbd.HistorialxPaciente import historialporpaciente
-from Funcionesbd.TurnosAsignados import ventana_turnos_medico_logueado
-from Funcionesbd.AgregarHistoriaClinica import agregar_historia_clinica  # <-- Importamos la función nueva
+from Hospitalsangabriel.Funcionesbd.HistorialxPaciente import historialporpaciente
+from Hospitalsangabriel.Funcionesbd.TurnosAsignados import ventana_turnos_medico_logueado
+from Hospitalsangabriel.Funcionesbd.AgregarHistoriaClinica import agregar_historia_clinica  # <-- Importamos la función nueva
 
 class VentanaMedico(tk.Toplevel):
     def __init__(self, maestro, usuario):
@@ -58,7 +58,7 @@ class VentanaMedico(tk.Toplevel):
     def abrir_turnos_asignados(self):
         """Abre la ventana de turnos (con selector de médicos)"""
         try:
-            from Funcionesbd.TurnosAsignados import ventana_turnos_medico_logueado
+            from Hospitalsangabriel.Funcionesbd.TurnosAsignados import ventana_turnos_medico_logueado
             ventana_turnos_medico_logueado()  # No pasamos parámetros
         except Exception as e:
             messagebox.showerror("Error", f"No se pudieron mostrar los turnos asignados.\n\n{e}")

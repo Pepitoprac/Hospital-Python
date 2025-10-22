@@ -6,6 +6,7 @@ from rutadb import DB as RutaDb
 
 DB_PATH = RutaDb
 
+DB_PATH = RutaDb
 def agregarmedico():
     ventana = tk.Toplevel()
     ventana.title("Agregar Médico [Panel Admin]")

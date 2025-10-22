@@ -79,7 +79,7 @@ def ventana_listar_medicos():
         entry_matricula.grid(row=1, column=1, padx=10, pady=5)
 
         # Traer lista de especialidades
-        conexion = sqlite3.connect(DB_PATH)
+        conexion = sqlite3.connect(RutaDb)
         cursor = conexion.cursor()
         cursor.execute("SELECT id, nombre FROM especialidad")
         especialidades = cursor.fetchall()

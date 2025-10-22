@@ -2,10 +2,12 @@ import sqlite3
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-DB = "hospital.db"
+from rutadb import DB as RutaDb
+
+DB_PATH = RutaDb
 
 def conectar_db():
-    return sqlite3.connect(DB)
+    return sqlite3.connect(RutaDb)
 
 def obtener_pacientes():
     with conectar_db() as conexion:

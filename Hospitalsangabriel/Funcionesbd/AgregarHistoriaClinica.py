@@ -4,7 +4,9 @@ from tkinter import ttk, messagebox
 import sqlite3
 from datetime import datetime
 
-DB_PATH = "hospital.db"
+from rutadb import DB as RutaDb
+
+DB_PATH = RutaDb
 
 def agregar_historia_clinica(medico_logueado):
     """

@@ -35,7 +35,7 @@ def agregar_usuario(parent=None):
             return
 
         try:
-            conexion = sqlite3.connect(DB_PATH)
+            conexion = sqlite3.connect(RutaDb)
             cursor = conexion.cursor()
             cursor.execute(
                 "INSERT INTO usuario (nombre, contrasena, rol) VALUES (?, ?, ?)",
