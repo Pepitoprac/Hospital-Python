@@ -4,7 +4,7 @@ from Modelos.Medico import Medico
 from Modelos.Paciente import Paciente
 from Modelos.Turno import Turno
 from Modelos.HistoriaClinica import HistoriaClinica
-from Authenticador.autenticador import Auth
+from Modelos.autenticador import Auth
 
 
 def inicializar_bd():
