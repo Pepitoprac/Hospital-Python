@@ -8,7 +8,7 @@ from Hospitalsangabriel.Funcionesbd.HistorialxPaciente import historialporpacien
 from Hospitalsangabriel.Funcionesbd.ListarMedico import ventana_listar_medicos
 from Hospitalsangabriel.Funcionesbd.ListarPaciente import ventana_listar_pacientes
 from Hospitalsangabriel.Funcionesbd.Turnoxmedico import ventana_turnos_por_medico
-from Hospitalsangabriel.Funcionesbd.AgregarUsuario import agregar_usuario  # <--- Importamos agregar_usuario
+from Hospitalsangabriel.Funcionesbd.AgregarUsuario import agregarmedico  # <--- Importamos agregar_usuario
 
 class VentanaAdmin(tk.Toplevel):
     def __init__(self, maestro, usuario):
@@ -84,7 +84,7 @@ class VentanaAdmin(tk.Toplevel):
 
     def abrir_agregar_usuario(self):  # <--- Nuevo método
         try:
-            agregar_usuario(parent=self)
+            agregarmedico(parent=self)
         except Exception as e:
             messagebox.showerror("Error", str(e))
 
