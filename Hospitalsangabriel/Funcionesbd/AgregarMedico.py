@@ -2,6 +2,9 @@ import os
 import tkinter as tk
 from tkinter import messagebox, ttk
 import sqlite3
+from rutadb import DB as RutaDb
+
+DB_PATH = RutaDb
 
 def agregarmedico():
     ventana = tk.Toplevel()
@@ -25,16 +28,15 @@ def agregarmedico():
     combo_especialidad.grid(row=3, column=1, padx=10, pady=5)
 
     # --- Ruta absoluta del DB ---
-    db_path = os.path.abspath("hospital.db")
 
     # --- Cargar especialidades desde la DB ---
     try:
-        conexion = sqlite3.connect(db_path)
+        conexion = sqlite3.connect(RutaDb)
         cursor = conexion.cursor()
         cursor.execute("SELECT id, nombre FROM especialidad ORDER BY nombre")
         especialidades = cursor.fetchall()
     except Exception as e:
-        messagebox.showerror("Error DB", f"No se pudo leer la tabla 'especialidad'.\nRuta DB: {db_path}\n\n{e}")
+        messagebox.showerror("Error DB", f"No se pudo leer la tabla 'especialidad'.\nRuta DB: {RutaDb}\n\n{e}")
         return
     finally:
         try:
@@ -44,7 +46,7 @@ def agregarmedico():
 
     if not especialidades:
         messagebox.showwarning("Sin especialidades",
-            f"No se encontraron especialidades en la base de datos.\nDB: {db_path}")
+            f"No se encontraron especialidades en la base de datos.\nDB: {RutaDb}")
         combo_especialidad["values"] = []
         esp_dict = {}
     else:
@@ -70,7 +72,7 @@ def agregarmedico():
         especialidad_id = esp_dict[esp_nombre]
 
         try:
-            conexion = sqlite3.connect(db_path)
+            conexion = sqlite3.connect(RutaDb)
             cursor = conexion.cursor()
             cursor.execute(
                 "INSERT INTO medico (nombre, matricula, especialidad_id, contrasena) VALUES (?, ?, ?, ?)",

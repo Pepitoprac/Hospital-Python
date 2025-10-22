@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
 import sqlite3
+from rutadb import DB as RutaDb
 
-DB_PATH = "hospital.db"
+DB_PATH = RutaDb
 
 def agregar_usuario(parent=None):
     ventana = tk.Toplevel(parent) if parent else tk.Tk()

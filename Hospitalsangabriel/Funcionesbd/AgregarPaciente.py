@@ -3,6 +3,9 @@ from tkinter import messagebox, ttk
 import sqlite3
 from tkcalendar import DateEntry  # <-- Importar
 from datetime import datetime
+from rutadb import DB as RutaDb
+
+DB_PATH = RutaDb
 
 def agregar_paciente():
     ventana = tk.Toplevel()

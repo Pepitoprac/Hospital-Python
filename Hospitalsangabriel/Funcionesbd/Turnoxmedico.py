@@ -1,14 +1,14 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sqlite3
+from rutadb import DB as RutaDb
 
-DB_PATH = "hospital.db"
-
+DB_PATH = RutaDb
 # --------------------
 # Obtener médicos (id, matricula, nombre)
 # --------------------
 def obtener_medicos():
-    with sqlite3.connect(DB_PATH) as conexion:
+    with sqlite3.connect(RutaDb) as conexion:
         cursor = conexion.cursor()
         cursor.execute("SELECT id, matricula, nombre FROM medico")
         return cursor.fetchall()
@@ -17,7 +17,7 @@ def obtener_medicos():
 # Ver turnos por médico
 # --------------------
 def verturnopormedico(medico_id):
-    with sqlite3.connect(DB_PATH) as conexion:
+    with sqlite3.connect(RutaDb) as conexion:
         cursor = conexion.cursor()
         cursor.execute("""
             SELECT 

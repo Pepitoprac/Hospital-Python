@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sqlite3
+from rutadb import DB as RutaDb
 
-DB_PATH = "hospital.db"
+DB_PATH = RutaDb
 
 def historialporpaciente():
     def buscar():

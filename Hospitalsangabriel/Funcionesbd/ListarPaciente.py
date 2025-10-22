@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sqlite3
+from rutadb import DB as RutaDb
 
-DB_PATH = "hospital.db"
-
+DB_PATH = RutaDb
 # -------------------------
 # Traer pacientes
 # -------------------------
@@ -85,7 +85,7 @@ def ventana_listar_pacientes():
                 return
 
             try:
-                with sqlite3.connect(DB_PATH, timeout=10) as conexion:
+                with sqlite3.connect(RutaDb, timeout=10) as conexion:
                     cursor = conexion.cursor()
                     cursor.execute(
                         "UPDATE paciente SET urgencia = ? WHERE id = ?",

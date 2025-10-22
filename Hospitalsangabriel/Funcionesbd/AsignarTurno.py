@@ -2,9 +2,9 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 import sqlite3
 from tkcalendar import DateEntry  # <-- Importar
+from rutadb import DB as RutaDb
 
-DB_PATH = "hospital.db"
-
+DB_PATH = RutaDb
 def asignarturno():
     ventana = tk.Toplevel()
     ventana.title("Asignar Turno [Panel Admin]")

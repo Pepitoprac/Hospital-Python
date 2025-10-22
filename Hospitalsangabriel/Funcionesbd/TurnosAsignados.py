@@ -3,13 +3,15 @@ from tkinter import ttk, messagebox
 import sqlite3
 from datetime import datetime
 
-DB_PATH = "hospital.db"
+from rutadb import DB as RutaDb
+
+DB_PATH = RutaDb
 
 # --------------------
 # Obtener turnos según filtros
 # --------------------
 def obtener_turnos(medico_id=None, solo_pendientes=False):
-    with sqlite3.connect(DB_PATH) as conexion:
+    with sqlite3.connect(RutaDb) as conexion:
         cursor = conexion.cursor()
         query = """
             SELECT 
@@ -52,7 +54,7 @@ def ventana_turnos_medico_logueado():
     medicos_combo.pack(pady=5)
 
     # Cargar médicos de la DB
-    with sqlite3.connect(DB_PATH) as conexion:
+    with sqlite3.connect(RutaDb) as conexion:
         cursor = conexion.cursor()
         cursor.execute("SELECT id, nombre FROM medico")
         medicos = cursor.fetchall()

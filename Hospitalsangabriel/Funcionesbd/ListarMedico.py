@@ -1,14 +1,15 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import sqlite3
+from rutadb import DB as RutaDb
 
-DB_PATH = "hospital.db"
+DB_PATH = RutaDb
 
 # -------------------------
 # Traer médicos con JOIN para mostrar nombre de especialidad
 # -------------------------
 def listarmedico():
-    conexion = sqlite3.connect(DB_PATH)
+    conexion = sqlite3.connect(RutaDb)
     cursor = conexion.cursor()
     cursor.execute("""
         SELECT m.id, m.nombre, m.matricula, e.nombre as especialidad
@@ -106,7 +107,7 @@ def ventana_listar_medicos():
                     esp_id = e[0]
                     break
 
-            conexion = sqlite3.connect(DB_PATH)
+            conexion = sqlite3.connect(RutaDb)
             cursor = conexion.cursor()
             cursor.execute("""
                 UPDATE medico
