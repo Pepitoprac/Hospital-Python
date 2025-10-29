@@ -42,7 +42,7 @@ def agregar_paciente():
 
         try:
             cursor.execute(
-                "INSERT INTO paciente (dni, nombre, fechaNacimiento) VALUES (?, ?, ?, ?)",
+                "INSERT INTO paciente (dni, nombre, fechaNacimiento) VALUES (?, ?, ?)",
                 (dni, nombre, fecha)
             )
             conexion.commit()

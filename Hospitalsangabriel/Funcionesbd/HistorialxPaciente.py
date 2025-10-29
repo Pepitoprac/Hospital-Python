@@ -12,22 +12,26 @@ def historialporpaciente():
             messagebox.showwarning("Error", "Ingrese un DNI.")
             return
 
-        conn = sqlite3.connect(RutaDb)
+        conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
         cursor.execute("""
-        SELECT p.nombre, hc.fecha, hc.hora, a.descripcion, m.nombre, hc.detalles_sintomas
-        FROM historia_clinica hc
-        JOIN paciente p ON p.id = hc.paciente_id
-        LEFT JOIN medico m ON m.id = hc.medico_id
-        LEFT JOIN area a ON a.id = hc.area_id
-        WHERE p.dni = ?
-        ORDER BY hc.fecha DESC, hc.hora DESC
-    """, (dni,))
-
+            SELECT 
+                p.nombre, 
+                hc.fecha, 
+                hc.hora, 
+                a.descripcion AS area, 
+                m.nombre AS medico, 
+                hc.detalles_sintomas
+            FROM historia_clinica hc
+            JOIN paciente p ON p.id = hc.paciente_id
+            LEFT JOIN medico m ON m.id = hc.medico_id
+            LEFT JOIN area a ON a.id = hc.area_id
+            WHERE p.dni = ?
+            ORDER BY hc.fecha DESC, hc.hora DESC
+        """, (dni,))
         resultados = cursor.fetchall()
         conn.close()
 
-        # Limpiar tabla
         for row in tabla.get_children():
             tabla.delete(row)
 
@@ -35,13 +39,12 @@ def historialporpaciente():
             for r in resultados:
                 tabla.insert("", "end", values=r)
         else:
-            # Buscar si existe el paciente
-            conn = sqlite3.connect(RutaDb)
+            conn = sqlite3.connect(DB_PATH)
             cursor = conn.cursor()
             cursor.execute("SELECT nombre FROM paciente WHERE dni = ?", (dni,))
             paciente = cursor.fetchone()
             conn.close()
-            
+
             if paciente:
                 messagebox.showinfo("Sin historias", f"El paciente '{paciente[0]}' no tiene historias clínicas aún.")
             else:
