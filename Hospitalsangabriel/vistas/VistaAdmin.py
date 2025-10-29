@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
+
+# --- Importaciones de funciones ---
 from Hospitalsangabriel.Funcionesbd.VerTurno import ventana_turnos
 from Hospitalsangabriel.Funcionesbd.AgregarMedico import agregarmedico
 from Hospitalsangabriel.Funcionesbd.AgregarPaciente import agregar_paciente
@@ -8,17 +10,19 @@ from Hospitalsangabriel.Funcionesbd.HistorialxPaciente import historialporpacien
 from Hospitalsangabriel.Funcionesbd.ListarMedico import ventana_listar_medicos
 from Hospitalsangabriel.Funcionesbd.ListarPaciente import ventana_listar_pacientes
 from Hospitalsangabriel.Funcionesbd.Turnoxmedico import ventana_turnos_por_medico
-from Hospitalsangabriel.Funcionesbd.AgregarUsuario import agregarmedico  # <--- Importamos agregar_usuario
+from Hospitalsangabriel.Funcionesbd.AgregarUsuario import agregarusuario_admin  # ✅ corregido
 
 class VentanaAdmin(tk.Toplevel):
     def __init__(self, maestro, usuario):
         super().__init__(maestro)
         self.maestro = maestro
         self.usuario = usuario
+
         self.title(f"Panel de Administración - {usuario['nombre']}")
+        self.geometry("600x400")
         self.resizable(False, False)
 
-        # Crear barra de menú
+        # ===== Barra de menú =====
         barra = tk.Menu(self)
         self.config(menu=barra)
         menu_acciones = tk.Menu(barra, tearoff=0)
@@ -26,7 +30,7 @@ class VentanaAdmin(tk.Toplevel):
         barra.add_cascade(label="Acciones", menu=menu_acciones)
         barra.add_cascade(label="Ayuda", menu=menu_ayuda)
 
-        # Frame principal
+        # ===== Contenedor principal =====
         cont = ttk.Frame(self, padding=12)
         cont.pack(fill="both", expand=True)
 
@@ -34,11 +38,11 @@ class VentanaAdmin(tk.Toplevel):
             row=0, column=0, columnspan=3, pady=(0, 10)
         )
 
-        # Botones asociados a métodos
+        # ===== Lista de botones =====
         botones_info = [
             ("Agregar Médico", self.abrir_agregar_medico),
             ("Agregar Paciente", self.abrir_agregar_paciente),
-            ("Agregar Usuario", self.abrir_agregar_usuario),  # <--- Botón nuevo
+            ("Agregar Usuario", self.abrir_agregar_usuario),
             ("Asignar Turno", self.abrir_asignar_turno),
             ("Historial por Paciente", self.abrir_historial_por_paciente),
             ("Listar Médicos", self.abrir_listar_medicos),
@@ -57,72 +61,73 @@ class VentanaAdmin(tk.Toplevel):
                 col = 0
                 fila += 1
 
-        # Menú Acciones
+        # ===== Menú Acciones =====
         menu_acciones.add_command(label="Agregar Médico", command=self.abrir_agregar_medico)
         menu_acciones.add_command(label="Agregar Paciente", command=self.abrir_agregar_paciente)
-        menu_acciones.add_command(label="Asignar Turno", command=self.abrir_asignar_turno)
+        menu_acciones.add_command(label="Agregar Usuario", command=self.abrir_agregar_usuario)
         menu_acciones.add_separator()
         menu_acciones.add_command(label="Cerrar sesión", command=self.cerrar_sesion)
 
-        # Menú Ayuda
+        # ===== Menú Ayuda =====
         menu_ayuda.add_command(label="Acerca de…", command=self.acerca_de)
 
+    # ===== Métodos de acciones =====
     def acerca_de(self):
         messagebox.showinfo("Acerca de", "Sistema de Turnos — Panel Admin")
 
     def abrir_agregar_medico(self):
         try:
-            agregarmedico()
+            agregarmedico(parent=self)
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudo abrir la ventana de médicos:\n{e}")
 
     def abrir_agregar_paciente(self):
         try:
-            agregar_paciente()
+            agregar_paciente(parent=self)
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudo abrir la ventana de pacientes:\n{e}")
 
-    def abrir_agregar_usuario(self):  # <--- Nuevo método
+    def abrir_agregar_usuario(self):
         try:
-            agregarmedico(parent=self)
+            agregarusuario_admin(parent=self)
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudo abrir la ventana de usuarios:\n{e}")
 
     def abrir_asignar_turno(self):
         try:
-            asignarturno()
+            asignarturno(parent=self)
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudo abrir la ventana de turnos:\n{e}")
 
     def abrir_historial_por_paciente(self):
         try:
-            historialporpaciente()
+            historialporpaciente(parent=self)
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudo abrir el historial:\n{e}")
 
     def abrir_listar_medicos(self):
         try:
-            ventana_listar_medicos()
+            ventana_listar_medicos(parent=self)
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudo abrir la lista de médicos:\n{e}")
 
     def abrir_listarpacientes(self):
         try:
-            ventana_listar_pacientes()
+            ventana_listar_pacientes(parent=self)
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudo abrir la lista de pacientes:\n{e}")
 
     def abrir_turnos_por_medico(self):
         try:
-            ventana_turnos_por_medico()
+            ventana_turnos_por_medico(parent=self)
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudo abrir la vista de turnos por médico:\n{e}")
 
     def abrir_ver_turno(self):
         try:
-            ventana_turnos(self)
+            ventana_turnos(parent=self)
         except Exception as e:
-            messagebox.showerror("Error", str(e))
+            messagebox.showerror("Error", f"No se pudo abrir la vista de turnos:\n{e}")
 
     def cerrar_sesion(self):
         self.destroy()

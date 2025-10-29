@@ -1,13 +1,12 @@
 import sqlite3
 import tkinter as tk
 from tkinter import ttk, messagebox
-
 from rutadb import DB as RutaDb
 
 DB_PATH = RutaDb
 
 def conectar_db():
-    return sqlite3.connect(RutaDb)
+    return sqlite3.connect(DB_PATH)
 
 def obtener_pacientes():
     with conectar_db() as conexion:
@@ -25,7 +24,7 @@ def ver_turnos(paciente_id):
                 m.nombre AS medico,
                 t.fecha,
                 t.hora,
-                p.urgencia
+                t.urgencia
             FROM turno t
             JOIN paciente p ON t.paciente_id = p.id
             JOIN medico m ON t.medico_id = m.id
@@ -37,13 +36,12 @@ def ver_turnos(paciente_id):
 
 def ventana_turnos(parent):
     win = tk.Toplevel(parent)
-    win.title("Historial de Turnos")
+    win.title("Historial de Turnos (Pasados)")
     win.geometry("750x450")
 
-    # --- Seleccionar paciente ---
     tk.Label(win, text="Seleccione un paciente:").pack(pady=5)
-
     pacientes = obtener_pacientes()
+
     if not pacientes:
         messagebox.showwarning("Sin datos", "No hay pacientes registrados.")
         win.destroy()
@@ -53,7 +51,6 @@ def ventana_turnos(parent):
     combo_paciente = ttk.Combobox(win, values=list(paciente_map.keys()), state="readonly", width=50)
     combo_paciente.pack(pady=5)
 
-    # --- Tabla ---
     columnas = ("ID", "Paciente", "Médico", "Fecha", "Hora", "Urgencia")
     tabla_turnos = ttk.Treeview(win, columns=columnas, show="headings", height=15)
 
@@ -84,5 +81,4 @@ def ventana_turnos(parent):
             urgencia = urgencia if urgencia is not None else "—"
             tabla_turnos.insert("", "end", values=(turno_id, paciente, medico, fecha, hora, urgencia))
 
-    # --- Botón ---
     tk.Button(win, text="Ver Turnos Pasados", command=mostrar_turnos, bg="lightblue").pack(pady=5)
