@@ -29,8 +29,8 @@ def verturnopormedico(medico_id):
         """, (medico_id,))
         return cursor.fetchall()
 
-def ventana_turnos_por_medico():
-    ventana = tk.Toplevel()
+def ventana_turnos_por_medico(parent=None):
+    ventana = tk.Toplevel(parent) if parent else tk.Toplevel()
     ventana.title("Turnos por Médico (Hoy)")
     ventana.geometry("800x450")
 

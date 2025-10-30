@@ -5,7 +5,9 @@ from rutadb import DB as RutaDb
 
 DB_PATH = RutaDb
 
-def historialporpaciente():
+def historialporpaciente(parent=None):
+    ventana = tk.Toplevel(parent) if parent else tk.Toplevel()
+
     def buscar():
         dni = entry_dni.get().strip()
         if not dni:

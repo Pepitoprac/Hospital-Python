@@ -1,3 +1,3 @@
 import os
 
-DB = os.path.abspath("Hospital-Python/test/hospital.db")
+DB = os.path.abspath("test/hospital.db")

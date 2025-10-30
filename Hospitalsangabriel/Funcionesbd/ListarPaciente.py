@@ -23,8 +23,8 @@ def listarpaciente():
 # -------------------------
 # Ventana Listar Pacientes
 # -------------------------
-def ventana_listar_pacientes():
-    ventana = tk.Toplevel()
+def ventana_listar_pacientes(parent=None):
+    ventana = tk.Toplevel(parent) if parent else tk.Toplevel()
     ventana.title("Lista de Pacientes")
     ventana.geometry("650x400")
 
